@@ -91,21 +91,72 @@
   }
 
   function addRow() {
-    const s = startEl.value.trim();
-    const e = stopEl.value.trim();
-    const act = actionEl.value.trim();
-    const c = commentEl.value;
+  // read values
+  let s = startEl.value.trim();
+  let e = stopEl.value.trim();
+  const act = actionEl.value.trim();
 
-    if (!s || !e) { alert('Please set both start and stop times.'); return; }
-    const mins = diffMinutes(s, e);
-    if (mins == null || mins < 0) { alert('Stop must be after Start.'); return; }
-    if (!act) { alert('Please choose an action.'); return; }
+  // helper: make a datetime-local string for "now"
+  const pad = n => String(n).padStart(2, '0');
+  const toLocalInput = d => {
+    const y = d.getFullYear(), m = d.getMonth()+1, day = d.getDate();
+    const h = d.getHours(), min = d.getMinutes();
+    return `${y}-${pad(m)}-${pad(day)}T${pad(h)}:${pad(min)}`;
+  };
 
-    rows.push({ start: s, stop: e, minutes: mins, action: act, comment: c });
-    saveRows();
-    render();
-    clearForm();
+  // If neither is provided, default both to "now"
+  if (!s && !e) {
+    const now = new Date();
+    s = toLocalInput(now);
+    e = s;
+    startEl.value = s;
+    stopEl.value  = e;
   }
+
+  // If start is provided but stop is empty, auto-fill stop = start
+  if (s && !e) {
+    e = s;
+    stopEl.value = e;
+  }
+
+  // If stop is provided but start is empty, auto-fill start = stop
+  if (!s && e) {
+    s = e;
+    startEl.value = s;
+  }
+
+  // Require an Action
+  if (!act) {
+    alert('Please choose an Action.');
+    return;
+  }
+
+  // Compute minutes and normalize (swap if stop < start)
+  let startDate = new Date(s);
+  let stopDate  = new Date(e);
+  if (stopDate < startDate) {
+    // swap
+    [startDate, stopDate] = [stopDate, startDate];
+    // reflect swap in inputs
+    startEl.value = toLocalInput(startDate);
+    stopEl.value  = toLocalInput(stopDate);
+  }
+
+  const minutes = Math.round((stopDate - startDate) / 60000);
+
+  // Save
+  rows.push({
+    start: startEl.value,
+    stop : stopEl.value,
+    minutes,
+    action: act,
+    comment: commentEl.value
+  });
+
+  render();
+  saveIfPersist();
+  clearForm();
+}
 
   function adjustLength(delta) {
     if (!startEl.value) { alert('Set a start time first.'); return; }
