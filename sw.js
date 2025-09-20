@@ -1,25 +1,19 @@
-// sw.js — works on localhost *and* GitHub Pages
-// sw.js
-const CACHE_NAME = 'mal-cache-v5';
-
+// sw.js — GitHub Pages friendly + cache-busting
+const CACHE_NAME = 'mal-cache-v6'; // bump on each deploy
 const FILES_TO_CACHE = [
-  './',                      // current path (works at / and /action-log/)
-  './index.html',
-  './app.js',
-  './manifest.webmanifest',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './',
+  './index.html?v=6',
+  './app.js?v=6',
+  './manifest.webmanifest?v=6',
+  './icons/icon-192.png?v=6',
+  './icons/icon-512.png?v=6'
 ];
 
-// Install: pre-cache core files
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE)));
   self.skipWaiting();
 });
 
-// Activate: clear old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -29,31 +23,30 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: cache-first for same-origin requests, network fallback
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  // Only handle same-origin
-  if (new URL(req.url).origin !== self.location.origin) return;
+  const url = new URL(req.url);
 
-  // For navigations, fall back to cached index.html (lets app load offline)
-  if (req.mode === 'navigate') {
+  // same-origin only
+  if (url.origin !== self.location.origin) return;
+
+  // Navigations: network-first, fallback to cached shell
+  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
       (async () => {
         try {
-          // Try the network first to get fresh HTML
           const fresh = await fetch(req);
           return fresh;
         } catch {
-          // Offline: return cached shell
           const cache = await caches.open(CACHE_NAME);
-          return cache.match('./index.html');
+          return cache.match('./index.html?v=6') || cache.match('./index.html');
         }
       })()
     );
     return;
   }
 
-  // For static assets: cache-first
+  // Static assets: cache-first
   event.respondWith(
     caches.match(req).then(cached => cached || fetch(req))
   );
