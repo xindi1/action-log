@@ -137,3 +137,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+# Ignore exported CSV files
+*.csv
+
+# Ignore local environment or OS files
+.DS_Store
+Thumbs.db
