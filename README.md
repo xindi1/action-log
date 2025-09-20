@@ -7,3 +7,6 @@ Mobile-friendly, works offline, and supports CSV export.
 Clone the repo and run locally with:  
 ```bash
 npx serve
+
+## License  
+All rights reserved. This project is not open source.
