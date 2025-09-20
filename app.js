@@ -1,4 +1,5 @@
 // app.js — Action Log (mobile-optimized)
+window.APP_VERSION = "1.0.5"; // bump each change
 
 (() => {
   const STORAGE_KEY = 'mal-v1';
