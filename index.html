@@ -4,136 +4,66 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Action Log</title>
-<small id="version" class="hint">v<span id="ver"></span></small>
-<script>
-  document.getElementById('ver').textContent = (window.APP_VERSION || 'dev');
-</script>
 
-  <!-- Optional PWA hooks -->
-  <link rel="manifest" href="manifest.webmanifest" />
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest?v=6" />
   <meta name="theme-color" content="#0b0c10" />
 
   <style>
     :root{
-      --bg:#f5f6f8;
-      --card:#ffffff;
-      --ink:#0b0c10;
-      --muted:#6b7280;
-      --border:#e5e7eb;
+      --bg:#0b0c10; --card:#121418; --ink:#e5e7eb;
+      --muted:#9aa3af; --border:#1f2937; --radius:14px;
       --accent:#22c55e;
-      --radius:14px;
     }
-    @media (prefers-color-scheme: dark){
-      :root{
-        --bg:#0b0c10; --card:#121418; --ink:#e5e7eb;
-        --muted:#9aa3af; --border:#1f2937;
-      }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f5f6f8; --card:#ffffff; --ink:#0b0c10; --muted:#6b7280; --border:#e5e7eb; }
     }
-
     *{box-sizing:border-box}
-    body{
-      margin:0; background:var(--bg); color:var(--ink);
-      font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
-    }
-    .wrap{ max-width:840px; margin:16px auto; padding:0 12px 24px; }
-
-    /* Compact header bar */
-    .topbar{
-      position:sticky; top:0; z-index:10;
-      margin:0 0 10px;
-      background:color-mix(in srgb, var(--bg) 85%, transparent);
-      border:1px solid var(--border); border-radius:12px;
-      padding:8px 12px; font-weight:650;
-      backdrop-filter:saturate(180%) blur(10px);
-    }
-
-    .card{
-      background:var(--card); border:1px solid var(--border);
-      border-radius:var(--radius); padding:12px;
-      box-shadow:0 6px 24px rgba(0,0,0,.06);
-    }
-
-    /* Fields */
-    input, select{
-      width:100%; height:44px; padding:0 12px; font-size:14px;
-      color:var(--ink); background:var(--card);
-      border:1px solid var(--border); border-radius:10px;
-      margin-bottom:8px;
-    }
-    /* Fix elongated datetime fields (iOS/Chrome) */
-    input[type="datetime-local"]{
-      -webkit-appearance:none; appearance:none;
-      padding-right:12px; background-clip:padding-box;
-      border-radius:10px; overflow:hidden; box-shadow:none;
-      font-size:13px;
-    }
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    .wrap{max-width:840px;margin:16px auto;padding:0 12px 24px}
+    .topbar{position:sticky;top:0;z-index:10;margin:0 0 10px;background:color-mix(in srgb, var(--bg) 85%, transparent);
+      border:1px solid var(--border);border-radius:12px;padding:8px 12px;font-weight:650;backdrop-filter:saturate(180%) blur(10px);display:flex;align-items:center;gap:8px}
+    .hint{color:var(--muted);font-size:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+    input,select{width:100%;height:44px;padding:0 12px;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+    input[type="datetime-local"]{-webkit-appearance:none;appearance:none;padding-right:12px;background-clip:padding-box;border-radius:10px;overflow:hidden;box-shadow:none;font-size:13px}
     input[type="datetime-local"]::-webkit-inner-spin-button,
     input[type="datetime-local"]::-webkit-clear-button,
-    input[type="datetime-local"]::-webkit-calendar-picker-indicator{ display:none; }
-
-    /* Buttons */
-    .btn-row{ display:flex; gap:8px; }
-    button{
-      flex:1; min-height:44px; padding:0 14px; font-size:14px;
-      border:none; border-radius:10px; font-weight:600; cursor:pointer;
-      color:#fff;
-    }
-    .btn-save{ background:#2e7d32; } .btn-save:hover{ background:#388e3c; }
-    .btn-clear{ background:#d0d5db; color:#111827; }
-    .btn-clear:hover{ background:#c7ccd3; }
-    .btn-toggle{ background:#e5e7eb; color:#111827; margin-top:8px; }
-    @media (prefers-color-scheme: dark){
-      .btn-clear{ background:#333; color:#eaeaea; }
-      .btn-clear:hover{ background:#444; }
-      .btn-toggle{ background:#2a2f36; color:#eaeaea; }
-    }
-
-    /* Chips */
-    .chips{ display:flex; gap:10px; justify-content:space-between; margin:6px 0 10px; }
-    .chip{
-      flex:1; min-width:60px; border-radius:999px; border:1px solid var(--border);
-      background:transparent; color:var(--ink); height:40px; font-weight:600;
-    }
-
-    /* Entries toolbar */
-    .toolbar{ display:flex; gap:8px; margin-bottom:6px; }
-    .btn-export{ background:#1976d2; } .btn-export:hover{ background:#1e88e5; }
-    .btn-share{ background:#6a1b9a; } .btn-share:hover{ background:#8e24aa; }
-    .btn-clearall{ background:#b71c1c; } .btn-clearall:hover{ background:#d32f2f; }
-
-    /* Table */
-    #entriesTable{ width:100%; border-collapse:collapse; table-layout:fixed; }
-    #entriesTable th,#entriesTable td{
-      padding:6px 4px; font-size:13px; text-align:center; border-bottom:1px dashed var(--border);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    #entriesTable th{ font-weight:600; color:var(--muted); }
-
-    /* Hide comment column on small screens */
-    @media (max-width:500px){
-      #entriesTable th.comment-col,
-      #entriesTable td:nth-child(6){ display:none; }
-    }
-
-    /* "View" button for notes */
-    .view-btn{
-      background:#616161; color:#fff; border:none; padding:6px 10px;
-      border-radius:10px; font-size:12px; min-height:32px;
-    }
-    .view-btn:hover{ background:#757575; }
-    @media (prefers-color-scheme: dark){
-      .view-btn{ background:#424242; } .view-btn:hover{ background:#4f4f4f; }
-    }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator{display:none}
+    .btn-row{display:flex;gap:8px}
+    button{flex:1;min-height:44px;padding:0 14px;font-size:14px;border:none;border-radius:10px;font-weight:600;cursor:pointer;color:#fff}
+    .btn-save{background:#2e7d32}.btn-save:hover{background:#388e3c}
+    .btn-clear{background:#333;color:#eaeaea}.btn-clear:hover{background:#444}
+    .btn-toggle{background:#2a2f36;color:#eaeaea;margin-top:8px}
+    @media (prefers-color-scheme: light){.btn-clear{background:#d0d5db;color:#111827}.btn-clear:hover{background:#c7ccd3}.btn-toggle{background:#e5e7eb;color:#111827}}
+    .chips{display:flex;gap:10px;justify-content:space-between;margin:6px 0 10px}
+    .chip{flex:1;min-width:60px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--ink);height:40px;font-weight:600}
+    .toolbar{display:flex;gap:8px;margin-bottom:6px}
+    .btn-export{background:#1976d2}.btn-export:hover{background:#1e88e5}
+    .btn-share{background:#6a1b9a}.btn-share:hover{background:#8e24aa}
+    .btn-clearall{background:#b71c1c}.btn-clearall:hover{background:#d32f2f}
+    #entriesTable{width:100%;border-collapse:collapse;table-layout:fixed}
+    #entriesTable th,#entriesTable td{padding:6px 4px;font-size:13px;text-align:center;border-bottom:1px dashed var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #entriesTable th{font-weight:600;color:var(--muted)}
+    .view-btn{background:#424242;color:#fff;border:none;padding:6px 10px;border-radius:10px;font-size:12px;min-height:32px}
+    .view-btn:hover{background:#4f4f4f}
+    @media (max-width:500px){#entriesTable th.comment-col,#entriesTable td:nth-child(6){display:none}}
+    .footer-row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    .ghost{background:transparent;color:var(--muted);border:1px dashed var(--border)}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="topbar">Action Log</div>
+    <div class="topbar">
+      <div>Action Log</div>
+      <small class="hint">v<span id="ver"></span></small>
+      <span class="hint" style="margin-left:auto">Installable · Works offline</span>
+    </div>
 
     <!-- Form -->
     <section class="card">
       <input id="start" type="datetime-local" aria-label="Start time" />
-      <input id="stop" type="datetime-local" aria-label="Stop time" />
+      <input id="stop"  type="datetime-local" aria-label="Stop time" />
 
       <select id="action" aria-label="Action">
         <option value="" selected disabled>Select action…</option>
@@ -148,10 +78,10 @@
       <input id="comment" type="text" placeholder="Comment (optional)" aria-label="Comment" />
 
       <div class="chips">
-        <button class="chip" data-min="-15" type="button">–</button>
-        <button class="chip" data-min="15" type="button">+15m</button>
-        <button class="chip" data-min="30" type="button">+30m</button>
-        <button class="chip" data-min="60" type="button">+1h</button>
+        <button type="button" class="chip" data-min="-15">–</button>
+        <button type="button" class="chip" data-min="15">+15m</button>
+        <button type="button" class="chip" data-min="30">+30m</button>
+        <button type="button" class="chip" data-min="60">+1h</button>
       </div>
 
       <div class="btn-row">
@@ -160,13 +90,17 @@
       </div>
 
       <button class="btn-toggle" id="toggleEntries">Show Entries</button>
+
+      <div class="footer-row">
+        <button id="resetCache" class="ghost" type="button">Reset app cache</button>
+      </div>
     </section>
 
     <!-- Entries -->
     <section class="card" id="entriesCard" style="display:none; margin-top:12px;">
       <div class="toolbar">
         <button class="btn-export" id="btnExport">Export CSV</button>
-        <button class="btn-share" id="btnShare">Share…</button>
+        <button class="btn-share"  id="btnShare">Share…</button>
         <button class="btn-clearall" id="btnClearAll">Clear all</button>
       </div>
 
@@ -186,18 +120,17 @@
     </section>
   </div>
 
-  <script src="app.js"></script>
-  <script src="app.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .catch(err => console.warn('SW reg failed', err));
-  });
-}
-</script>
-</body>
-</html>
-
+  <script src="app.js?v=6"></script>
+  <script>
+    // PWA registration (GitHub Pages friendly)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js?v=6', { scope: './' })
+          .catch(err => console.warn('SW reg failed', err));
+      });
+    }
+    // Show version
+    document.getElementById('ver').textContent = (window.APP_VERSION || 'dev');
+  </script>
 </body>
 </html>
