@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Action Log</title>
+<small id="version" class="hint">v<span id="ver"></span></small>
+<script>
+  document.getElementById('ver').textContent = (window.APP_VERSION || 'dev');
+</script>
 
   <!-- Optional PWA hooks -->
   <link rel="manifest" href="manifest.webmanifest" />
