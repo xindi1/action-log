@@ -143,3 +143,7 @@ vite.config.ts.timestamp-*
 # Ignore local environment or OS files
 .DS_Store
 Thumbs.db
+*.xlsx
+*.csv
+.DS_Store
+Thumbs.db
