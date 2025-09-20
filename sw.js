@@ -1,6 +1,6 @@
 // sw.js — works on localhost *and* GitHub Pages
 // sw.js
-const CACHE_NAME = 'mal-cache-v4'; // <-- bump this
+const CACHE_NAME = 'mal-cache-v5';
 
 const FILES_TO_CACHE = [
   './',                      // current path (works at / and /action-log/)
