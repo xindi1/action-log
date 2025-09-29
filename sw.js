@@ -1,5 +1,5 @@
 // sw.js — GitHub Pages friendly + cache-busting
-const CACHE_NAME = 'mal-cache-v6'; // bump on each deploy
+const CACHE_NAME = 'mal-cache-v7'; // bump on each deploy
 const FILES_TO_CACHE = [
   './',
   './index.html?v=6',
