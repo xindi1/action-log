@@ -1,12 +1,12 @@
 // sw.js — GitHub Pages friendly + cache-busting
-const CACHE_NAME = 'mal-cache-v7'; // bump on each deploy
+const CACHE_NAME = 'mal-cache-v8'; // bump on each deploy
 const FILES_TO_CACHE = [
   './',
-  './index.html?v=7',
-  './app.js?v=7',
-  './manifest.webmanifest?v=7',
-  './icons/icon-192.png?v=7',
-  './icons/icon-512.png?v=7'
+  './index.html?v=8',
+  './app.js?v=8',
+  './manifest.webmanifest?v=8',
+  './icons/icon-192.png?v=8',
+  './icons/icon-512.png?v=8'
 ];
 
 self.addEventListener('install', (event) => {
@@ -39,7 +39,7 @@ self.addEventListener('fetch', (event) => {
           return fresh;
         } catch {
           const cache = await caches.open(CACHE_NAME);
-          return cache.match('./index.html?v=7') || cache.match('./index.html');
+          return cache.match('./index.html?v=8') || cache.match('./index.html');
         }
       })()
     );
