@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- full-bleed green background -->
+  <rect width="1024" height="1024" fill="#24c65e"/>
+  <!-- white check -->
+  <path fill="#fff" d="M426 708c-11 0-22-4-30-12l-134-134c-17-17-17-44 0-61s44-17 61 0l103 103 245-245c17-17 44-17 61 0s17 44 0 61L456 696c-8 8-19 12-30 12z"/>
+</svg>
