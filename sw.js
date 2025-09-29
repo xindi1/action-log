@@ -2,11 +2,11 @@
 const CACHE_NAME = 'mal-cache-v7'; // bump on each deploy
 const FILES_TO_CACHE = [
   './',
-  './index.html?v=6',
-  './app.js?v=6',
-  './manifest.webmanifest?v=6',
-  './icons/icon-192.png?v=6',
-  './icons/icon-512.png?v=6'
+  './index.html?v=7',
+  './app.js?v=7',
+  './manifest.webmanifest?v=7',
+  './icons/icon-192.png?v=7',
+  './icons/icon-512.png?v=7'
 ];
 
 self.addEventListener('install', (event) => {
@@ -39,7 +39,7 @@ self.addEventListener('fetch', (event) => {
           return fresh;
         } catch {
           const cache = await caches.open(CACHE_NAME);
-          return cache.match('./index.html?v=6') || cache.match('./index.html');
+          return cache.match('./index.html?v=7') || cache.match('./index.html');
         }
       })()
     );
