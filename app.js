@@ -1,5 +1,5 @@
 // app.js — Action Log
-window.APP_VERSION = "1.0.6";
+window.APP_VERSION = "1.0.7";
 
 (() => {
   const STORAGE_KEY = 'mal-v1';
